@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" class="h-full">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Khata - डिजिटल बहीखाता & वॉयस असिस्टेंट</title>
-    <meta name="description" content="Smart Khata - दुकानदार भाइयों के लिए आधुनिक वॉयस आधारित डिजिटल उधारी खाता">
-    <!-- Google Fonts -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Smart Khata • डिजिटल बहीखाता & वॉयस असिस्टेंट</title>
+    <meta name="description" content="दुकानदार भाइयों के लिए आधुनिक वॉयस आधारित डिजिटल उधारी और लेन-देन खाता">
+    <meta name="theme-color" content="#064e3b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Fonts: Inter / Plus Jakarta Sans & Devanagari -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rozha+One&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -19,215 +22,309 @@
             theme: {
                 extend: {
                     colors: {
-                        khata: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            200: '#bbf7d0',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                            800: '#166534',
-                            900: '#14532d',
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22'
+                        },
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a'
                         }
                     },
                     fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', '"Noto Sans Devanagari"', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', '"Noto Sans Devanagari"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 8px 30px rgba(0,0,0,0.06)',
+                        'floating': '0 12px 36px -4px rgba(5,150,105,0.22)',
+                        'subtle': '0 2px 10px rgba(0,0,0,0.03)'
                     }
                 }
             }
         }
     </script>
+
     <style>
-        /* Pulse wave animation for recording */
-        @keyframes pulse-ring {
+        /* Safe area support for notch and modern phones */
+        :root {
+            --sat: env(safe-area-inset-top, 0px);
+            --sab: env(safe-area-inset-bottom, 0px);
+        }
+
+        body {
+            -webkit-tap-highlight-color: transparent;
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        }
+
+        /* Ambient background mesh */
+        .ambient-canvas {
+            background-color: #f1f5f9;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+        }
+
+        /* Pulsing voice wave animation when recording */
+        @keyframes soundWave {
+            0%, 100% { height: 6px; }
+            50% { height: 26px; }
+        }
+
+        .wave-bar {
+            animation: soundWave 0.9s ease-in-out infinite;
+        }
+        .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.6s; }
+
+        @keyframes micPulse {
             0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.65);
             }
-
             70% {
-                transform: scale(1.03);
-                box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
+                transform: scale(1.05);
+                box-shadow: 0 0 0 16px rgba(239, 68, 68, 0);
             }
-
             100% {
-                transform: scale(0.95);
+                transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
             }
         }
 
-        .mic-active {
-            animation: pulse-ring 1.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
-            background-color: #ef4444 !important;
-            border-color: #b91c1c !important;
+        .mic-recording-active {
+            animation: micPulse 1.4s infinite cubic-bezier(0.4, 0, 0.6, 1);
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
             color: #ffffff !important;
+            border-color: #b91c1c !important;
         }
 
-        /* Ambient subtle background glow */
-        .ambient-glow {
-            background: radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.15) 0%, rgba(248, 250, 252, 0) 70%);
+        /* Hide scrollbars cleanly */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
 
-<body
-    class="bg-slate-100 min-h-screen font-sans flex items-center justify-center p-3 sm:p-5 ambient-glow text-slate-800">
+<body class="h-full ambient-canvas text-slate-800 flex justify-center antialiased select-none sm:select-auto sm:py-6 sm:px-4">
 
-    <!-- Mobile-First App Container -->
-    <main
-        class="w-full max-w-md bg-white rounded-3xl shadow-xl shadow-slate-200/80 border border-slate-100 overflow-hidden flex flex-col transition-all duration-300">
+    <!-- Mobile Device Container: Full viewport on mobile, sleek frame on tablet/desktop -->
+    <main class="w-full h-full sm:h-auto sm:max-w-md sm:min-h-[720px] bg-slate-50 flex flex-col sm:rounded-[36px] sm:shadow-2xl sm:shadow-slate-300/80 sm:border sm:border-slate-200/90 overflow-hidden relative transition-all">
 
-        <!-- App Header with Branding & Status Indicator -->
-        <header class="bg-gradient-to-r from-khata-700 via-khata-600 to-emerald-600 text-white p-5 pt-6 pb-6 relative">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="w-11 h-11 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/20">
-                        📖
+        <!-- Top Header & App Bar -->
+        <header class="bg-gradient-to-br from-brand-950 via-brand-900 to-brand-800 text-white pt-3 pb-5 px-4 sm:px-5 relative flex-shrink-0 shadow-md">
+            
+            <!-- Mobile Status bar shim / Top row -->
+            <div class="flex items-center justify-between pb-3.5 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-white/20 to-white/5 border border-white/20 backdrop-blur-md flex items-center justify-center text-xl shadow-inner">
+                        📒
                     </div>
                     <div>
-                        <h1 class="text-2xl font-extrabold tracking-tight flex items-center gap-1.5 leading-none">
-                            Smart Khata
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs uppercase font-extrabold tracking-wider text-brand-300">Smart Khata</span>
+                            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-brand-500/20 text-brand-200 border border-brand-400/30 rounded-full">AI Voice</span>
+                        </div>
+                        <h1 class="text-lg font-bold tracking-tight text-white leading-tight">
+                            डिजिटल बहीखाता
                         </h1>
-                        <p class="text-xs font-medium text-emerald-100 mt-1 flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-300 inline-block animate-pulse"></span>
-                            दुकानदार डिजिटल बहीखाता
-                        </p>
                     </div>
                 </div>
 
-                <!-- Audio toggle helper indicator -->
-                <button id="speakerToggle" title="आवाज़ (Voice Output) ऑन है" aria-label="स्पीकर स्थिति"
-                    class="p-2.5 rounded-xl bg-white/15 border border-white/20 hover:bg-white/25 active:scale-95 transition text-emerald-100">
-                    <svg id="speakerIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                    </svg>
+                <!-- Speaker audio toggle button -->
+                <button id="speakerToggle" type="button" onclick="toggleAudioOutput()" title="ऑडियो आवाज़ चालू/बंद"
+                    class="h-10 px-3 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 transition-all flex items-center gap-1.5 border border-white/15 text-xs font-semibold backdrop-blur-sm">
+                    <span id="speakerIconSvg">
+                        <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                        </svg>
+                    </span>
+                    <span id="speakerStatusText" class="text-emerald-100 text-[11px]">बोलकर बताएगा</span>
                 </button>
             </div>
 
-            <!-- Quick Chips / Examples -->
-            <div class="mt-4 flex gap-1.5 overflow-x-auto pb-1 no-scrollbar text-[11px] font-medium text-emerald-100">
-                <span class="opacity-75 whitespace-nowrap self-center">नमूना:</span>
-                <button type="button" onclick="setQuickText('शर्मा जी ने 500 का सामान लिया उधार')"
-                    class="bg-black/15 hover:bg-black/25 px-2.5 py-1 rounded-full whitespace-nowrap transition border border-white/10 active:scale-95">
-                    "शर्मा जी उधार ₹500"
-                </button>
-                <button type="button" onclick="setQuickText('राकेश का बैलेंस कितना है?')"
-                    class="bg-black/15 hover:bg-black/25 px-2.5 py-1 rounded-full whitespace-nowrap transition border border-white/10 active:scale-95">
-                    "राकेश का बैलेंस?"
-                </button>
+            <!-- Quick Voice Prompts / Suggestions Chips -->
+            <div class="pt-3">
+                <div class="flex items-center justify-between mb-1.5 text-[11px] text-brand-200 font-medium">
+                    <span class="flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        त्वरित नमूने (Tap to use):
+                    </span>
+                    <span class="text-[10px] text-white/50">स्वाइप करें 👉</span>
+                </div>
+                <div class="flex gap-2 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
+                    <button type="button" onclick="setQuickText('शर्मा जी ने ₹500 का सामान उधार लिया')"
+                        class="flex-shrink-0 bg-white/10 hover:bg-white/20 active:scale-95 px-3 py-1.5 rounded-xl text-xs text-white font-medium border border-white/15 transition-all backdrop-blur-sm flex items-center gap-1.5 shadow-sm">
+                        <span class="text-emerald-300 font-bold">₹</span> "शर्मा जी उधार ₹500"
+                    </button>
+                    <button type="button" onclick="setQuickText('राकेश का कुल बैलेंस कितना है?')"
+                        class="flex-shrink-0 bg-white/10 hover:bg-white/20 active:scale-95 px-3 py-1.5 rounded-xl text-xs text-white font-medium border border-white/15 transition-all backdrop-blur-sm flex items-center gap-1.5 shadow-sm">
+                        <span class="text-amber-300">🔍</span> "राकेश का बैलेंस?"
+                    </button>
+                    <button type="button" onclick="setQuickText('वर्मा जी ने ₹1200 जमा किए')"
+                        class="flex-shrink-0 bg-white/10 hover:bg-white/20 active:scale-95 px-3 py-1.5 rounded-xl text-xs text-white font-medium border border-white/15 transition-all backdrop-blur-sm flex items-center gap-1.5 shadow-sm">
+                        <span class="text-blue-300">💳</span> "वर्मा जी जमा ₹1200"
+                    </button>
+                </div>
             </div>
         </header>
 
-        <!-- Main Workspace -->
-        <section class="p-5 flex flex-col gap-4">
+        <!-- Scrollable Body Workspace -->
+        <div class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4">
 
             <!-- Input Card -->
-            <div class="relative">
-                <div class="flex justify-between items-center mb-1.5 px-1">
-                    <label for="userInput" class="text-xs font-bold uppercase tracking-wider text-slate-500">
-                        एंट्री लिखें या बोलें (Voice/Text)
+            <section class="bg-white rounded-3xl p-4 sm:p-5 shadow-soft border border-slate-100 flex flex-col gap-2 relative">
+                <div class="flex justify-between items-center px-1">
+                    <label for="userInput" class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-brand-600"></span>
+                        एंट्री लिखें या बोलें
                     </label>
                     <button id="clearBtn" onclick="clearInput()" type="button"
-                        class="text-xs font-semibold text-slate-400 hover:text-red-500 transition hidden">
+                        class="text-xs font-semibold text-rose-500 hover:text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md transition hidden">
                         साफ़ करें ✕
                     </button>
                 </div>
 
-                <div
-                    class="relative rounded-2xl border-2 border-slate-200 focus-within:border-khata-600 focus-within:ring-4 focus-within:ring-khata-100 transition-all bg-slate-50/50 hover:bg-white focus-within:bg-white overflow-hidden shadow-sm">
+                <!-- Textarea with Modern Focus Rings -->
+                <div class="relative rounded-2xl bg-slate-50 border-2 border-slate-200/90 focus-within:border-brand-600 focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-100/70 transition-all overflow-hidden">
                     <textarea id="userInput" rows="4"
-                        class="w-full p-3.5 pb-8 text-base text-slate-800 placeholder-slate-400 bg-transparent resize-none border-none outline-none focus:ring-0 leading-relaxed font-medium"
-                        placeholder="जैसे: Sharma ji ne 500 ka saman liya... ya 'Verma ji ka balance batao'"></textarea>
+                        class="w-full p-3.5 pb-10 text-base text-slate-800 placeholder-slate-400 bg-transparent resize-none border-none outline-none focus:ring-0 leading-relaxed font-medium"
+                        placeholder="जैसे: Sharma ji ne 500 ka saman udhaar liya... ya 'Ramesh ka hisab batao'"></textarea>
 
-                    <!-- Recording Visual Wave Status Bar -->
+                    <!-- Realtime Listening Waveform Banner -->
                     <div id="listeningIndicator"
-                        class="hidden absolute bottom-2 left-3 right-3 flex items-center justify-between text-xs text-red-600 font-semibold bg-red-50/90 py-1 px-3 rounded-lg border border-red-100">
-                        <span class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
-                            सुन रहा हूँ... बोलिए (Listening...)
-                        </span>
-                        <span class="text-[10px] text-red-400 font-mono">हिन्दी / Hinglish</span>
+                        class="hidden absolute bottom-2 left-2 right-2 bg-gradient-to-r from-rose-500 to-red-600 text-white rounded-xl py-2 px-3 flex items-center justify-between shadow-lg shadow-rose-500/30">
+                        <div class="flex items-center gap-2">
+                            <!-- Visual Animated Audio Bars -->
+                            <div class="flex items-center gap-1 h-5">
+                                <span class="wave-bar w-1 bg-white rounded-full"></span>
+                                <span class="wave-bar w-1 bg-white rounded-full"></span>
+                                <span class="wave-bar w-1 bg-white rounded-full"></span>
+                                <span class="wave-bar w-1 bg-white rounded-full"></span>
+                                <span class="wave-bar w-1 bg-white rounded-full"></span>
+                            </div>
+                            <span class="text-xs font-bold">आवाज़ सुन रहा हूँ... बोलिए</span>
+                        </div>
+                        <span class="text-[10px] font-mono bg-white/20 px-2 py-0.5 rounded text-white">Hinglish / Hindi</span>
                     </div>
+                </div>
+
+                <p class="text-[11px] text-slate-400 px-1">
+                    💡 <span class="text-slate-600 font-medium">सुझाव:</span> माइक बटन दबाकर ग्राहक का नाम और रकम सीधे बोल सकते हैं।
+                </p>
+            </section>
+
+            <!-- Loading Spinner State Card -->
+            <div id="loader"
+                class="hidden p-4 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-900 flex items-center gap-3 text-sm font-semibold shadow-sm animate-pulse">
+                <div class="w-8 h-8 rounded-full bg-amber-200/80 flex items-center justify-center flex-shrink-0">
+                    <svg class="animate-spin h-5 w-5 text-amber-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold text-amber-950">खाते में प्रोसेस हो रहा है...</p>
+                    <p class="text-xs text-amber-700 font-normal">सर्वर डेटा सुरक्षित रूप से दर्ज कर रहा है</p>
                 </div>
             </div>
 
-            <!-- Action Buttons Stack / Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <!-- Mic Button -->
-                <button id="micBtn" type="button" onclick="toggleVoiceRecognition()"
-                    class="h-13 py-3 px-4 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all duration-200 active:scale-98 shadow-sm bg-blue-50 text-blue-700 hover:bg-blue-100/90 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    <span id="micIcon" class="text-xl leading-none">🎙️</span>
-                    <span id="micLabel">बोल कर लिखें</span>
-                </button>
-
-                <!-- Primary Send Button -->
-                <button id="sendBtn" type="button" onclick="sendData()"
-                    class="h-13 py-3 px-4 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all duration-200 active:scale-98 shadow-md shadow-khata-600/25 bg-khata-600 hover:bg-khata-700 text-white border border-khata-700 focus:outline-none focus:ring-2 focus:ring-khata-500">
-                    <span id="sendIcon" class="text-lg leading-none">🚀</span>
-                    <span id="sendLabel">खाते में भेजें</span>
-                </button>
-            </div>
-
-            <!-- Loading Spinner State -->
-            <div id="loader"
-                class="hidden my-2 p-3.5 rounded-2xl bg-amber-50 border border-amber-200/80 text-amber-900 flex items-center justify-center gap-3 text-sm font-semibold transition-all">
-                <svg class="animate-spin h-5 w-5 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                    </path>
-                </svg>
-                <span>खाते में दर्ज हो रहा है... कृपया प्रतीक्षा करें</span>
-            </div>
-
-            <!-- Dynamic Response Area (Success / Error Card) -->
-            <div id="responseArea" class="hidden rounded-2xl p-4.5 border transition-all duration-300">
+            <!-- Dynamic Response / Feedback Card -->
+            <div id="responseArea" class="hidden rounded-3xl p-4.5 border transition-all duration-300 shadow-soft">
                 <div class="flex items-start gap-3">
-                    <div id="responseBadge" class="text-2xl flex-shrink-0 mt-0.5">✅</div>
-                    <div class="flex-1">
-                        <div class="flex items-center justify-between">
-                            <span id="responseStatusTitle" class="text-xs font-bold uppercase tracking-wider">परिणाम
-                                (Result)</span>
-                            <button id="speakAgainBtn" onclick="replayAudio()" type="button" title="दोबारा सुनें"
-                                class="text-xs px-2 py-0.5 rounded-full bg-white/70 hover:bg-white shadow-xs font-semibold flex items-center gap-1">
+                    <div id="responseBadge" class="w-10 h-10 rounded-2xl flex items-center justify-center text-xl flex-shrink-0 shadow-sm">
+                        ✅
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <span id="responseStatusTitle" class="text-xs font-bold uppercase tracking-wider">
+                                परिणाम (Result)
+                            </span>
+                            <button id="speakAgainBtn" onclick="replayAudio()" type="button"
+                                class="text-xs px-2.5 py-1 rounded-xl bg-white shadow-subtle border border-slate-200/60 font-semibold flex items-center gap-1 active:scale-95 transition text-slate-700 hover:bg-slate-50">
                                 🔊 फिर से सुनें
                             </button>
                         </div>
-                        <p id="responseText" class="mt-1 text-sm sm:text-base font-semibold leading-relaxed">
-                            <!-- Injected dynamically -->
+                        <p id="responseText" class="mt-1.5 text-sm sm:text-base font-semibold leading-relaxed">
+                            <!-- Dynamic text injected here -->
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Shopkeeper Quick Tips Footer / Safety note -->
-            <div
-                class="mt-2 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-                <span class="flex items-center gap-1 font-medium">
-                    🛡️ सुरक्षित एवं त्वरित बहीखाता
-                </span>
-                <span class="font-mono text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-500">v2.0 Voice-AI</span>
+            <!-- Shopkeeper Information & Status Widget -->
+            <div class="grid grid-cols-2 gap-2.5">
+                <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-subtle flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
+                        🔒
+                    </div>
+                    <div>
+                        <div class="text-[11px] text-slate-400 font-medium">डेटा सुरक्षा</div>
+                        <div class="text-xs font-bold text-slate-700">100% सेफ क्लाउड</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-subtle flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
+                        ⚡
+                    </div>
+                    <div>
+                        <div class="text-[11px] text-slate-400 font-medium">सिस्टम स्थिति</div>
+                        <div class="text-xs font-bold text-slate-700 flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> एक्टिव
+                        </div>
+                    </div>
+                </div>
             </div>
 
-        </section>
+        </div>
+
+        <!-- Sticky Bottom Mobile Action Bar with Hero Mic Button -->
+        <footer class="bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-3 flex-shrink-0 flex items-center justify-between gap-3 shadow-[0_-6px_25px_rgba(0,0,0,0.05)]">
+            <!-- Hero Sized Mic Button (Voice First Assistant) -->
+            <button id="micBtn" type="button" onclick="toggleVoiceRecognition()"
+                class="flex-1 h-16 rounded-2xl font-bold text-base sm:text-lg flex items-center justify-center gap-3 transition-all duration-200 active:scale-95 bg-gradient-to-r from-red-500 via-rose-500 to-red-600 hover:from-red-600 hover:to-rose-700 text-white shadow-lg shadow-rose-500/30 border border-rose-600 focus:outline-none focus:ring-4 focus:ring-rose-200">
+                <span id="micIcon" class="text-3xl leading-none filter drop-shadow">🎙️</span>
+                <div class="flex flex-col text-left leading-tight">
+                    <span id="micLabel" class="text-base font-extrabold tracking-tight">बोलकर लिखें</span>
+                    <span class="text-[10.5px] text-rose-100 font-medium">माइक दबाकर बोलें</span>
+                </div>
+            </button>
+
+            <!-- Send Submit Button -->
+            <button id="sendBtn" type="button" onclick="sendData()"
+                class="h-16 px-5 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-200 active:scale-95 shadow-floating bg-gradient-to-r from-brand-700 to-brand-800 hover:from-brand-800 hover:to-brand-900 text-white border border-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200">
+                <span id="sendIcon" class="text-2xl leading-none">🚀</span>
+                <span id="sendLabel" class="hidden xs:inline sm:inline">खाते में भेजें</span>
+            </button>
+        </footer>
+
     </main>
 
-    <!-- JavaScript Application Logic -->
+    <!-- Application Script Logic -->
     <script>
         /**
          * Smart Khata - Configuration & State
          */
-        // Placeholder Webhook URL as required
         const WEBHOOK_URL = "https://flow.sokt.io/func/scri87lRdL7i?sync=true";
 
-        // Global state
         let recognition = null;
         let isListening = false;
         let lastMessageToSpeak = "";
         let hindiVoice = null;
+        let audioOutputEnabled = true;
 
         // DOM Elements
         const userInput = document.getElementById("userInput");
@@ -244,8 +341,11 @@
         const responseStatusTitle = document.getElementById("responseStatusTitle");
         const listeningIndicator = document.getElementById("listeningIndicator");
         const clearBtn = document.getElementById("clearBtn");
+        const speakerToggle = document.getElementById("speakerToggle");
+        const speakerStatusText = document.getElementById("speakerStatusText");
+        const speakerIconSvg = document.getElementById("speakerIconSvg");
 
-        // Input listener for showing/hiding clear button
+        // Input listener for clear button toggle
         userInput.addEventListener("input", () => {
             clearBtn.classList.toggle("hidden", !userInput.value.trim());
         });
@@ -262,15 +362,28 @@
             userInput.focus();
         }
 
+        function toggleAudioOutput() {
+            audioOutputEnabled = !audioOutputEnabled;
+            if (audioOutputEnabled) {
+                speakerStatusText.innerText = "बोलकर बताएगा";
+                speakerIconSvg.innerHTML = `<svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>`;
+                speakerToggle.className = "h-10 px-3 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 transition-all flex items-center gap-1.5 border border-white/15 text-xs font-semibold backdrop-blur-sm";
+            } else {
+                speakerStatusText.innerText = "म्यूट है";
+                speakerIconSvg.innerHTML = `<svg class="w-4 h-4 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>`;
+                speakerToggle.className = "h-10 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 active:scale-95 transition-all flex items-center gap-1.5 border border-rose-400/30 text-xs font-semibold backdrop-blur-sm";
+                if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+            }
+        }
+
         /**
-         * Initialize Speech Synthesis and pre-fetch Hindi voice
+         * Initialize Speech Synthesis voices
          */
         function initVoices() {
             if (!("speechSynthesis" in window)) return;
 
             const updateVoiceList = () => {
                 const voices = window.speechSynthesis.getVoices();
-                // Priority: 1. Exact hi-IN voice, 2. Any Hindi voice, 3. Indian English fallback, 4. Default
                 hindiVoice = voices.find(v => v.lang === "hi-IN" || v.lang.startsWith("hi_IN") || v.lang.toLowerCase().includes("hindi"))
                     || voices.find(v => v.lang === "en-IN")
                     || null;
@@ -284,34 +397,26 @@
         initVoices();
 
         /**
-         * Text-to-Speech (TTS) Implementation
-         * Reads out the response received from webhook in Hindi
+         * Text-to-Speech Output
          */
         function speakMessage(text) {
-            if (!("speechSynthesis" in window)) {
-                console.warn("Speech synthesis not supported in this browser.");
-                return;
-            }
-
+            if (!audioOutputEnabled) return;
+            if (!("speechSynthesis" in window)) return;
             if (!text || !text.trim()) return;
+
             lastMessageToSpeak = text;
 
             try {
-                // Cancel previous audio to avoid overlapping
                 window.speechSynthesis.cancel();
-
-                // Clean string (strip emoji markers for cleaner speech pronunciation)
-                const cleanText = text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2702}-\u{27B0}\u{24C2}-\u{1F251}✅❌🚀🎙️]/gu, '').trim();
+                // Strip emojis for clear Hindi pronunciation
+                const cleanText = text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2702}-\u{27B0}\u{24C2}-\u{1F251}✅❌🚀🎙️🔍💳🔒⚡]/gu, '').trim();
 
                 const utterance = new SpeechSynthesisUtterance(cleanText || text);
                 utterance.lang = "hi-IN";
-                utterance.rate = 0.95; // Slightly slower for crisp clarity
+                utterance.rate = 0.95;
                 utterance.pitch = 1.0;
 
-                if (hindiVoice) {
-                    utterance.voice = hindiVoice;
-                }
-
+                if (hindiVoice) utterance.voice = hindiVoice;
                 window.speechSynthesis.speak(utterance);
             } catch (err) {
                 console.error("Audio playback error:", err);
@@ -325,15 +430,11 @@
         }
 
         /**
-         * Speech-to-Text (STT) Voice Input Setup
-         * Listens in Hindi/Hinglish (lang = 'hi-IN')
+         * Speech Recognition Setup
          */
         function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-            if (!SpeechRecognition) {
-                return null;
-            }
+            if (!SpeechRecognition) return null;
 
             const recog = new SpeechRecognition();
             recog.lang = "hi-IN";
@@ -343,9 +444,9 @@
 
             recog.onstart = () => {
                 isListening = true;
-                micBtn.classList.add("mic-active");
-                micIcon.innerText = "🔴";
-                micLabel.innerText = "सुन रहा हूँ...";
+                micBtn.classList.add("mic-recording-active");
+                micIcon.innerText = "🛑";
+                micLabel.innerText = "रोकें";
                 listeningIndicator.classList.remove("hidden");
             };
 
@@ -361,7 +462,7 @@
                 console.error("Speech recognition error:", event.error);
                 stopListeningUI();
                 if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-                    showResponseState(false, "माइक्रोफ़ोन की अनुमति (Permission) नहीं मिली। कृपया ब्राउज़र सेटिंग्स में Mic Allow करें।");
+                    showResponseState(false, "माइक्रोफ़ोन की अनुमति नहीं मिली। कृपया ब्राउज़र सेटिंग में Mic Allow करें।");
                 } else if (event.error === "network") {
                     showResponseState(false, "इंटरनेट नेटवर्क में समस्या है, कृपया टाइप करके भेजें।");
                 }
@@ -376,9 +477,9 @@
 
         function stopListeningUI() {
             isListening = false;
-            micBtn.classList.remove("mic-active");
+            micBtn.classList.remove("mic-recording-active");
             micIcon.innerText = "🎙️";
-            micLabel.innerText = "बोल कर लिखें";
+            micLabel.innerText = "बोलकर लिखें";
             listeningIndicator.classList.add("hidden");
         }
 
@@ -400,7 +501,6 @@
                 stopListeningUI();
             } else {
                 try {
-                    // Cancel any active speech output when listening
                     if (window.speechSynthesis) window.speechSynthesis.cancel();
                     recognition.start();
                 } catch (err) {
@@ -411,21 +511,21 @@
         }
 
         /**
-         * Update Response Area with animated feedback
+         * Response feedback renderer
          */
         function showResponseState(isSuccess, message) {
             responseArea.classList.remove("hidden");
             responseText.innerText = message;
 
             if (isSuccess) {
-                // Success styling (Trust-inspiring Green)
-                responseArea.className = "rounded-2xl p-4.5 border border-emerald-300 bg-emerald-50 text-emerald-900 shadow-sm transition-all duration-300";
+                responseArea.className = "rounded-3xl p-4.5 border border-emerald-200 bg-emerald-50/80 text-emerald-950 shadow-sm transition-all duration-300";
+                responseBadge.className = "w-10 h-10 rounded-2xl bg-emerald-200/80 text-emerald-800 flex items-center justify-center text-xl flex-shrink-0 shadow-xs";
                 responseBadge.innerText = "✅";
                 responseStatusTitle.className = "text-xs font-bold uppercase tracking-wider text-emerald-700";
                 responseStatusTitle.innerText = "सफलता (Success)";
             } else {
-                // Error styling (Clear Red)
-                responseArea.className = "rounded-2xl p-4.5 border border-rose-300 bg-rose-50 text-rose-900 shadow-sm transition-all duration-300";
+                responseArea.className = "rounded-3xl p-4.5 border border-rose-200 bg-rose-50/80 text-rose-950 shadow-sm transition-all duration-300";
+                responseBadge.className = "w-10 h-10 rounded-2xl bg-rose-200/80 text-rose-800 flex items-center justify-center text-xl flex-shrink-0 shadow-xs";
                 responseBadge.innerText = "❌";
                 responseStatusTitle.className = "text-xs font-bold uppercase tracking-wider text-rose-700";
                 responseStatusTitle.innerText = "त्रुटि (Error)";
@@ -433,7 +533,7 @@
         }
 
         /**
-         * Send Data to Webhook via Fetch API
+         * Send Data to Webhook
          */
         async function sendData() {
             const text = userInput.value.trim();
@@ -444,7 +544,6 @@
                 return;
             }
 
-            // UI Loading state
             loader.classList.remove("hidden");
             responseArea.classList.add("hidden");
             sendBtn.disabled = true;
@@ -462,7 +561,7 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Server returned status: ${response.status}`);
+                    throw new Error(`Server status: ${response.status}`);
                 }
 
                 const result = await response.json();
@@ -478,7 +577,6 @@
                     clearBtn.classList.add("hidden");
                 }
 
-                // Voice output: Speak out the response in Hindi
                 speakMessage(message);
 
             } catch (error) {
@@ -488,7 +586,6 @@
                 showResponseState(false, errMsg);
                 speakMessage(errMsg);
             } finally {
-                // Restore Send Button
                 sendBtn.disabled = false;
                 sendBtn.classList.remove("opacity-70", "cursor-not-allowed");
                 sendIcon.innerText = "🚀";
